@@ -69,4 +69,4 @@ SITE_ID = 1
 # ############################### #
 #         AUTHENTICATION          #
 # ############################### #
-AUTH_USER_MODEL = "apps.account.User"
+AUTH_USER_MODEL = "account.User"
