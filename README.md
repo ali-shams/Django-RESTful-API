@@ -20,13 +20,13 @@ Clone the repository first.
 * **Via SSH:**
 
 ```sh
-git clone
+git clone https://github.com/ali-shams/Django-RESTful-API.git
 ```
 
 * **Via HTTP:**
 
 ```sh
-git clone 
+git clone git@github.com:ali-shams/Django-RESTful-API.git
 ```
 
 ### 2. Python Environment Setup
