@@ -1,8 +1,6 @@
 import os
-import logging
 
 from decouple import config
-from sorl.thumbnail.log import ThumbnailLogHandler
 
 BASE_DIR = os.path.normpath(
     os.path.join(os.path.dirname(os.path.dirname(
@@ -101,23 +99,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, config('MEDIA_UPLOAD_DIR'))
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 FIXTURE_DIRS = tuple(config('FIXTURE_TEST_DIRS'))
-
-# ############################### #
-#            LOGGING              #
-# ############################### #
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
-handler = ThumbnailLogHandler()
-handler.setLevel(logging.ERROR)
-logging.getLogger('sorl.thumbnail').addHandler(handler)

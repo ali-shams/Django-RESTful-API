@@ -1,6 +1,3 @@
-from .base import *
-from .secure import *
-from .packages import *
 from decouple import config
 
 DEBUG = config('DEBUG', cast=bool)
