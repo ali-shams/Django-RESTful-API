@@ -1,5 +1,4 @@
 from django.utils.translation import gettext_lazy as _
-from django.contrib import admin
 from django.db import (
     models,
     connection
@@ -19,14 +18,6 @@ class TimeStampMixin(models.Model):
         help_text=_("Automatic registration of record modification time "
                     "in the database."),
     )
-
-    @admin.display(description=_("created"), ordering=("-created"))
-    def get_gregorian_created(self):
-        return self.created.strftime("%Y-%m-%d")
-
-    @admin.display(description=_("modified"), ordering=("-modified"))
-    def get_gregorian_modified(self):
-        return self.modified.strftime("%Y-%m-%d")
 
     class Meta:
         abstract = True

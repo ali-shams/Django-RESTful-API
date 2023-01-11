@@ -13,7 +13,7 @@ from .base import (
 #           CUSTOM APPS           #
 # ############################### #
 LOCAL_APPS = [
-    "painless"
+    "painless",
     "apps.account"
 ]
 
