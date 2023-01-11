@@ -30,6 +30,8 @@ THIRD_PARTY_PACKAGES = [
     # ############################### #
     #           EXTENSIONS            #
     # ############################### #
+    # RESTful API Packages
+    'rest_framework',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS + THIRD_PARTY_PACKAGES
