@@ -79,6 +79,7 @@ pip-compile requirements.in
 Add a secret key to the `settings.ini` file as follows:
 
 ```py
+# Open a terminal, and enter ``python``.
 import secrets
 
 secrets.token_urlsafe(50)
@@ -143,7 +144,7 @@ DATABASE
 # Your database name that is created on ``PostgreSQL``.
 DB_NAME =
 
-# Enter your database user and it must have access to the created db.
+# Enter your database user and it must have access to the created DB (default is ``postgres``).
 DB_USER =
 
 # Enter your specified user's database password.
@@ -152,10 +153,10 @@ DB_PASSWORD =
 # Accessible port of the installed database (default is ``5432``).
 DB_PORT =
 
-# The local Database is localhost if you are using docker must enter ``docker-service-name``.
+# The local Database is localhost if you are using docker must enter ``docker-service-name`` (default is ``localhost``).
 DB_HOST =
 
-# Select a test database name for the created user.
+# Select a test database name for the created user (Leave it blank at first).
 DB_TEST =
 ```
 
