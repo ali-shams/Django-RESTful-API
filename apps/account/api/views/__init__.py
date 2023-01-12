@@ -1,3 +1,7 @@
-from .user import UserAPIView
-from .user import LoginView
-from .user import ExampleView
+from .user import (
+    UserAPIView,
+    LoginView,
+    ExampleAPIView,
+    HomeAPIView,
+    UserRegisterAPIView,
+)
