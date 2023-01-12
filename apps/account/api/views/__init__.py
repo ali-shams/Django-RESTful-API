@@ -1,1 +1,4 @@
-from .user import UserRegisterAPI
+from .user import (
+    UserRegisterAPI,
+    UserLoginAPI,
+)
