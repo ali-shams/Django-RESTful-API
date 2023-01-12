@@ -1,2 +1,2 @@
-from .user import UserAdmin
+from .user import CustomUserAdmin
 from .token import TokenAdmin

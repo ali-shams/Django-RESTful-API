@@ -23,7 +23,7 @@ class User(AbstractUser,
     # ''createsuperuser'' management command
     REQUIRED_FIELDS = list()
 
-    # email field must be unique and case-insensitive, so override this filed.
+    # email field must be unique, so override this filed.
     email = models.EmailField(
         _("email address"),
         unique=True,
@@ -46,7 +46,7 @@ class User(AbstractUser,
     )
     is_verified = models.BooleanField(
         _("is verified"),
-        default=False,
+        default=True,
         help_text=_("Whether this user is verified or not"),
     )
 
