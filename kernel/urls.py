@@ -17,9 +17,13 @@ from django.contrib import admin
 from django.urls import (
     path,
     include,
+    re_path,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('apps.account.api.urls')),
+
+    # knox package
+    re_path(r'api/auth/', include('knox.urls'))
 ]

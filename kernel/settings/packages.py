@@ -32,6 +32,7 @@ THIRD_PARTY_PACKAGES = [
     # ############################### #
     # RESTful API Packages
     'rest_framework',
+    'knox',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS + THIRD_PARTY_PACKAGES
@@ -72,3 +73,10 @@ SITE_ID = 1
 #         AUTHENTICATION          #
 # ############################### #
 AUTH_USER_MODEL = "account.User"
+
+# ############################### #
+#               DRF               #
+# ############################### #
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+}
