@@ -4,8 +4,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
+from painless.models import TimeStampMixin
 
-class Token(models.Model):
+class Token(TimeStampMixin):
     token = models.UUIDField(
         _("token"),
         default=uuid.uuid4,
