@@ -1,13 +1,15 @@
 from django.urls import path
 
 from apps.account.api.views import (
-    UserRegisterAPI,
-    UserLoginAPI,
+    RegisterView,
+    LoginView,
+    LogoutView,
 )
 
 name = "apps.account"
 
 urlpatterns = [
-    path("register", UserRegisterAPI.as_view(), name=name),
-    path("login", UserLoginAPI.as_view(), name=name),
+    path("register", RegisterView.as_view(), name=name),
+    path("login", LoginView.as_view(), name=name),
+    path('logout', LogoutView.as_view(), name='knox_logout')
 ]

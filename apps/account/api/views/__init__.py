@@ -1,4 +1,5 @@
 from .user import (
-    UserRegisterAPI,
-    UserLoginAPI,
+    RegisterView,
+    LoginView,
+    LogoutView,
 )
