@@ -26,7 +26,8 @@ class User(AbstractUser,
     # email field must be unique, so override this filed.
     email = models.EmailField(
         _("email address"),
-        unique=True,
+        null=True,
+        blank=True,
         help_text=_("User's email address"),
         error_messages={
             "unique": _("A user with that email address already exists."),

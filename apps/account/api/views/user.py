@@ -4,13 +4,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.status import *
+from rest_framework import status
 
 from knox.views import LoginView as KnoxLoginView
 from knox.auth import TokenAuthentication
 
 from apps.account.models import User
-from apps.account.api.serializers import UserSerializers
+from apps.account.api.serializers import (
+    UserSerializers,
+    UserRegisterSerializers,
+)
 
 
 class UserAPIView(APIView):
@@ -23,13 +26,20 @@ class HomeAPIView(APIView):
         users = User.dal.all()
         ser_data = UserSerializers(instance=users, many=True)
         response = Response(data=ser_data.data,
-                            status=HTTP_200_OK)
+                            status=status.HTTP_200_OK)
         return response
 
 
 class UserRegisterAPIView(APIView):
     def post(self, request):
-        ...
+        serializer = UserRegisterSerializers(data=request.data)
+        if serializer.is_valid():
+            serializer.create(serializer.validated_data)
+            response = Response(data=serializer.data,
+                                status=status.HTTP_201_CREATED)
+            return response
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ExampleAPIView(APIView):
