@@ -1,30 +1,27 @@
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
+from knox.models import AuthToken
 
 from apps.account.forms import UserCreationExtendedForm
-from apps.account.models import (
-    User,
-    Token
-)
+from apps.account.models import User
 
 
-class TokenInLine(admin.TabularInline):
-    model = Token
-    fields = (
-        "token",
-    )
+class AuthTokenInLine(admin.TabularInline):
+    model = AuthToken
     readonly_fields = (
-        "token",
+        "digest",
+        "created",
+        "token_key",
+        "expiry",
     )
-    extra = 0
-    show_change_link = True
+    max_num = 0
 
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     inlines = (
-        TokenInLine,
+        AuthTokenInLine,
     )
     add_form = UserCreationExtendedForm
     add_fieldsets = (
@@ -58,7 +55,7 @@ class CustomUserAdmin(UserAdmin):
     )
     readonly_fields = (
         "created",
-        "modified"
+        "modified",
     )
     save_on_top = True
     fieldsets = [

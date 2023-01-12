@@ -1,4 +1,4 @@
 from .user import (
-    UserSerializers,
-    UserRegisterSerializers
+    CreateUserSerializer,
+    UserSerializer,
 )
