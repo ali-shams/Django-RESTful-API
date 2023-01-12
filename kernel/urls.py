@@ -25,5 +25,5 @@ urlpatterns = [
     path('account/', include('apps.account.api.urls')),
 
     # knox package
-    re_path(r'api/auth/', include('knox.urls'))
+    re_path(r'api/auth/', include('apps.account.api.urls'))
 ]
