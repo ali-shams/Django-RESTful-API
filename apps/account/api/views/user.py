@@ -2,11 +2,15 @@ from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from django.contrib.auth.signals import user_logged_out
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import password_validation
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import UpdateAPIView
 from knox.models import AuthToken
 from knox.auth import TokenAuthentication
 
@@ -14,7 +18,7 @@ from painless.factory import getOTP
 from apps.account.api.serializers import (
     CreateUserSerializer,
     LoginUserSerializer,
-    # SendOTPSerializer,
+    ChangePassSerializer,
 )
 
 User = get_user_model()
@@ -70,7 +74,7 @@ class ValidateOTPView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        get_otp_code, phone_number = request.data['otp_code'], request.data['phone_number']
+        get_otp_code, phone_number = request.data['otp_code'], request._auth.user.phone_number
         otp_code = cache.get(phone_number)
         if otp_code is None:
             return Response({
@@ -79,3 +83,41 @@ class ValidateOTPView(APIView):
         elif otp_code == get_otp_code:
             User.dal.set_user_active(phone_number)
             return Response(None, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "msg": f"OTP mismatch."
+            }, status=status.HTTP_100_CONTINUE)
+
+
+class ChangePassPView(UpdateAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def update(self, request, *args, **kwargs):
+        serializer = ChangePassSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if not request.user.check_password(serializer.data.get("old_password")):
+            raise ValidationError(_('Your old password was '
+                                    'entered incorrectly. Please enter it again.'))
+
+        if serializer.data['new_password'] != serializer.data['new_password_repeat']:
+            raise ValidationError(_("The two password fields didn't match."))
+
+        password_validation.validate_password(serializer.data['new_password'], request.user)
+        request.user.set_password(serializer.data.get("new_password"))
+        request.user.save()
+        return Response({
+            "token": AuthToken.objects.create(request.user)[1]
+        }, status=status.HTTP_200_OK)
+
+
+class ForgotPassPView(APIView):
+    ...
+
+
+class ListTokensView(APIView):
+    ...
+
+
+class KillTokensView(APIView):
+    ...

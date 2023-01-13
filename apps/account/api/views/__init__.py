@@ -4,4 +4,8 @@ from .user import (
     LogoutView,
     SendOTPView,
     ValidateOTPView,
+    ChangePassPView,
+    ForgotPassPView,
+    ListTokensView,
+    KillTokensView,
 )

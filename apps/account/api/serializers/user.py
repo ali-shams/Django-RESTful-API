@@ -1,17 +1,17 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(required=True, write_only=True)
+    password2 = serializers.CharField(required=True)
 
     class Meta:
         model = User
         fields = ("username", "phone_number", "password", "password2")
-        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         del validated_data["password2"]
@@ -19,7 +19,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
-            raise serializers.ValidationError("Password mismatch.")
+            raise serializers.ValidationError(_("Password mismatch."))
         return attrs
 
 
@@ -31,10 +31,14 @@ class LoginUserSerializer(serializers.Serializer):
         user = authenticate(**data)
         if user and user.is_active:
             return user
-        raise serializers.ValidationError("Invalid Details.")
+        raise serializers.ValidationError(_("Invalid Details."))
 
 
-# class SendOTPSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ("phone_number",)
+class ChangePassSerializer(serializers.Serializer):
+    restrict = {
+        'max_length': 128,
+        'required': True
+    }
+    old_password = serializers.CharField(**restrict)
+    new_password = serializers.CharField(**restrict)
+    new_password_repeat = serializers.CharField(**restrict)
