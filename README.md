@@ -2,18 +2,20 @@
 
 ## Project Stack
 
-|    Name    | Version |
-|:----------:|:------:|
-|   Python   |  3.11  |
-|   Django   |   4.1  |
-|    Git     |  2.37  |
-| PostgreSQL |  14.5  |
+|    Name    | Version   |
+|:----------:|:---------:|
+|   Python   |   3.11    |
+|   Django   |    4.1    |
+|    Git     |   2.37    |
+| PostgreSQL |   14.5    |
+|   Redis    |    7.0       |
+|   Docker   |  20.10         |
 
 ---
 
 ## Development Environment Configuration
 
-### 1. Clone the Project
+### 1. Clone the Projec
 
 Clone the repository first.
 
