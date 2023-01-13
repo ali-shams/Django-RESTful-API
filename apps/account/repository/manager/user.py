@@ -61,3 +61,6 @@ class UserManager(BaseUserManager):
 
     def get_queryset(self):
         return UserQuerySet(self.model, using=self._db)
+
+    def set_user_active(self, phone_number):
+        return self.get_queryset().set_user_active(phone_number)

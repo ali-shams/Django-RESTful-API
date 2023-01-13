@@ -32,3 +32,9 @@ class LoginUserSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Invalid Details.")
+
+
+# class SendOTPSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ("phone_number",)

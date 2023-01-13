@@ -47,7 +47,7 @@ class User(AbstractUser,
     )
     is_verified = models.BooleanField(
         _("is verified"),
-        default=True,
+        default=False,
         help_text=_("Whether this user is verified or not"),
     )
 

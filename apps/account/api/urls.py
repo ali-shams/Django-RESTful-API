@@ -4,6 +4,8 @@ from apps.account.api.views import (
     RegisterView,
     LoginView,
     LogoutView,
+    SendOTPView,
+    ValidateOTPView,
 )
 
 name = "apps.account"
@@ -11,5 +13,7 @@ name = "apps.account"
 urlpatterns = [
     path("register", RegisterView.as_view(), name=name),
     path("login", LoginView.as_view(), name=name),
-    path('logout', LogoutView.as_view(), name='knox_logout')
+    path('logout', LogoutView.as_view(), name='knox_logout'),
+    path('send-otp', SendOTPView.as_view(), name='knox_logout'),
+    path('validate-otp', ValidateOTPView.as_view(), name='knox_logout'),
 ]
