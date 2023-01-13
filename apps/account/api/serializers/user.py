@@ -42,3 +42,14 @@ class ChangePassSerializer(serializers.Serializer):
     old_password = serializers.CharField(**restrict)
     new_password = serializers.CharField(**restrict)
     new_password_repeat = serializers.CharField(**restrict)
+
+
+class ForgotPassSerializer(serializers.Serializer):
+    restrict = {
+        'max_length': 128,
+        'required': True
+    }
+    phone_number = serializers.CharField(required=True)
+    otp_code = serializers.CharField(required=True)
+    new_password = serializers.CharField(**restrict)
+    new_password_repeat = serializers.CharField(**restrict)
