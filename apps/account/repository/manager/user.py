@@ -62,8 +62,8 @@ class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(self.model, using=self._db)
 
-    def set_user_active(self, phone_number):
-        return self.get_queryset().set_user_active(phone_number)
+    def set_user_verified(self, phone_number):
+        return self.get_queryset().set_user_verified(phone_number)
 
     def update_user_password(self, username, new_password):
         return self.get_queryset().update_user_password(username, new_password)

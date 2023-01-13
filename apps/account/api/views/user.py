@@ -19,6 +19,7 @@ from apps.account.api.serializers import (
     CreateUserSerializer,
     LoginUserSerializer,
     ChangePassSerializer,
+    ForgotPassSerializer,
 )
 
 User = get_user_model()
@@ -66,7 +67,6 @@ class SendOTPView(APIView):
             return Response({
                 "msg": f"Please try about {cache.ttl(phone_number)} seconds later."
             }, status=status.HTTP_100_CONTINUE)
-        return Response(None, status=status.HTTP_200_OK)
 
 
 class ValidateOTPView(APIView):
@@ -78,7 +78,7 @@ class ValidateOTPView(APIView):
         otp_code = cache.get(phone_number)
         if otp_code is None:
             return Response({
-                "msg": f"OTP expired."
+                "msg": f"OTP expired, Try again."
             }, status=status.HTTP_100_CONTINUE)
         elif otp_code == get_otp_code:
             User.dal.set_user_active(phone_number)
@@ -111,8 +111,28 @@ class ChangePassPView(UpdateAPIView):
         }, status=status.HTTP_200_OK)
 
 
-class ForgotPassPView(APIView):
-    ...
+class ForgotPassPView(UpdateAPIView):
+    def update(self, request, *args, **kwargs):
+        serializer = ForgotPassSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        get_otp_code, phone_number = request.data['otp_code'], request.data['phone_number']
+        otp_code = cache.get(phone_number)
+        if otp_code is None:
+            return Response({
+                "msg": f"OTP expired, Try again."
+            }, status=status.HTTP_100_CONTINUE)
+        elif otp_code == get_otp_code and \
+                serializer.data['new_password'] == serializer.data['new_password_repeat']:
+            password_validation.validate_password(serializer.data['new_password'], request.user)
+            request.user.set_password(serializer.data.get("new_password"))
+            request.user.save()
+            return Response({
+                "token": AuthToken.objects.create(request.user)[1]
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "msg": f"Password mismatch.."
+            }, status=status.HTTP_100_CONTINUE)
 
 
 class ListTokensView(APIView):
