@@ -28,6 +28,10 @@ User = get_user_model()
 class RegisterView(generics.GenericAPIView):
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
+        request.data._mutable = True
+        request.data['phone_number'] = request.data['phone_number'].replace("+98", "0")
+        request.data['username'] = request.data['username'].lower()
+        request.data._mutable = False
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({
@@ -63,6 +67,7 @@ class SendOTPView(APIView):
         if is_sent is None:
             otp_code = getOTP(phone_number)
             cache.set(phone_number, otp_code, timeout=settings.CACHE_TTL)
+            return Response(None, status=status.HTTP_200_OK)
         else:
             return Response({
                 "msg": f"Please try about {cache.ttl(phone_number)} seconds later."
@@ -81,7 +86,7 @@ class ValidateOTPView(APIView):
                 "msg": f"OTP expired, Try again."
             }, status=status.HTTP_100_CONTINUE)
         elif otp_code == get_otp_code:
-            User.dal.set_user_active(phone_number)
+            User.dal.set_user_verified(phone_number)
             return Response(None, status=status.HTTP_200_OK)
         else:
             return Response({
@@ -123,11 +128,14 @@ class ForgotPassPView(UpdateAPIView):
             }, status=status.HTTP_100_CONTINUE)
         elif otp_code == get_otp_code and \
                 serializer.data['new_password'] == serializer.data['new_password_repeat']:
-            password_validation.validate_password(serializer.data['new_password'], request.user)
-            request.user.set_password(serializer.data.get("new_password"))
-            request.user.save()
+            # Anony user must find in the database
+            user = User.objects.filter(phone_number=phone_number).first()
+            password_validation.validate_password(serializer.data['new_password'], user)
+            user.set_password(serializer.data.get("new_password"))
+            # find user with that
+            user.save()
             return Response({
-                "token": AuthToken.objects.create(request.user)[1]
+                "token": AuthToken.objects.create(user)[1]
             }, status=status.HTTP_200_OK)
         else:
             return Response({
@@ -141,3 +149,10 @@ class ListTokensView(APIView):
 
 class KillTokensView(APIView):
     ...
+# 4a85dec48b144285bbced81032ceed9b1fb8f12323aaab268bb97fd5c613f6db hoseinmj
+
+# 466719a33665bea5c3fdb7dd1379dbab06bbcc6ff192eae728e15a695dea9d49 ali login
+
+# 874638e65fcdfc504eaba7ada176eb4f4aa1a3f837e361132798e985845df73b saja1
+
+# mj login fd1f6b449f2f70b948d034ea4531245c7cb3bf251140f60c8d9c6b48d1204f70

@@ -78,6 +78,7 @@ AUTH_USER_MODEL = "account.User"
 #               DRF               #
 # ############################### #
 REST_FRAMEWORK = {
+    # 'EXCEPTION_HANDLER': 'painless.api.exceptions.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
 }
 
@@ -87,7 +88,7 @@ REST_FRAMEWORK = {
 REDIS_HOST = config('REDIS_HOST')
 REDIS_PORT = config('REDIS_PORT')
 REDIS_DB = config('REDIS_DB')
-CACHE_TTL = 10 * 60 # seconds
+CACHE_TTL = 10 * 60  # seconds
 
 CACHES = {
     "default": {

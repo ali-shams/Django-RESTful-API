@@ -5,6 +5,7 @@ from ..helper.enums import RegexOperatorPattern
 
 
 def getOTP(phone_number):
+    operator = "Other"
     for operator in RegexOperatorPattern:
         if re.compile(operator.value).match(phone_number):
             operator = operator.name

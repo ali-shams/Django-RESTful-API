@@ -15,9 +15,26 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         del validated_data["password2"]
-        return User.objects.create_user(**validated_data)
+        return User.dal.create_user(**validated_data)
+
+    # def validate_username(self, value):
+    #     # breakpoint()
+    #     if User.dal.filter(username=value.lower()).exists():
+    #         # raise serializers.ValidationError(_("A user with that username already exists."))
+    #         # breakpoint()
+    #         raise UniqueApiException("username")
+    #     return value
+    #
+    # def validate_phone_number(self, value):
+    #     breakpoint()
+    #     if User.dal.filter(phone_number=value.replace("+98", "09")).exists():
+    #         # raise serializers.ValidationError(_("A user with that username already exists."))
+    #         # breakpoint()
+    #         raise UniqueApiException("phone_number")
+    #     return value
 
     def validate(self, attrs):
+        # breakpoint()
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError(_("Password mismatch."))
         return attrs
