@@ -101,14 +101,14 @@ class ValidateOTPView(APIView):
         otp_code = cache.get(phone_number)
         if otp_code is None:
             return Response({
-                "msg": f"OTP expired, Try again."
+                "msg": "OTP expired, Try again."
             }, status=status.HTTP_100_CONTINUE)
         elif otp_code == get_otp_code:
             User.dal.set_user_verified(phone_number)
             return Response(None, status=status.HTTP_200_OK)
         else:
             return Response({
-                "msg": f"OTP mismatch."
+                "msg": "OTP mismatch."
             }, status=status.HTTP_100_CONTINUE)
 
 
@@ -134,12 +134,20 @@ class ChangePassPView(UpdateAPIView):
 
 class ForgotPassPView(UpdateAPIView):
     def update(self, request, *args, **kwargs):
+<<<<<<< HEAD
         serializer = ForgotPassSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         get_otp_code = serializer.validated_data['otp_code']
         phone_number = serializer.validated_data['phone_number']
 
+=======
+        breakpoint()
+        serializer = ForgotPassSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        get_otp_code, phone_number = request.data['otp_code'], request.data['phone_number']
+        breakpoint()
+>>>>>>> 475977fc38e8e304c9d21f9f227fb23956aecf29
         otp_code = cache.get(phone_number)
         if otp_code is None:
             return Response({
@@ -147,6 +155,7 @@ class ForgotPassPView(UpdateAPIView):
             }, status=status.HTTP_100_CONTINUE)
         elif otp_code == get_otp_code and \
                 serializer.data['new_password'] == serializer.data['new_password_repeat']:
+<<<<<<< HEAD
             user = User.dal.find_user_by_phone_number(phone_number)
             user.set_password(serializer.data.get("new_password"))
             user.save()
@@ -162,6 +171,17 @@ class ForgotPassPView(UpdateAPIView):
         else:
             return Response({
                 "msg": f"Password mismatch."
+=======
+            password_validation.validate_password(serializer.data['new_password'], request.user)
+            request.user.set_password(serializer.data.get("new_password"))
+            request.user.save()
+            return Response({
+                "token": AuthToken.objects.create(request.user)[1]
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "msg": f"Password mismatch.."
+>>>>>>> 475977fc38e8e304c9d21f9f227fb23956aecf29
             }, status=status.HTTP_100_CONTINUE)
 
 
