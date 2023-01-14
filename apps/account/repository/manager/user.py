@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
         username = GlobalUserModel.normalize_username(username)
         user = self.model(username=username, email=email, **extra_fields)
         user.password = make_password(password)
+        user.clean()
         user.save(using=self._db)
         return user
 
@@ -68,4 +69,5 @@ class UserManager(BaseUserManager):
     def update_user_password(self, username, new_password):
         return self.get_queryset().update_user_password(username, new_password)
 
-
+    def find_user_by_phone_number(self, phone_number):
+        return self.get_queryset().find_user_by_phone_number(phone_number)

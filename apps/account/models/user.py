@@ -57,6 +57,12 @@ class User(AbstractUser,
         verbose_name = _("user")
         verbose_name_plural = _("user")
 
+    def clean(self):
+        super().clean()
+        self.email = self.__class__.objects.normalize_email(self.email)
+        self.username = self.username.lower()
+        self.phone_number = self.phone_number.replace("+98", "0")
+
     def __str__(self):
         return f"{self.username}"
 
