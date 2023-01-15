@@ -1,9 +1,18 @@
+import re
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError as DjangoSideValidationError
+from django.core.validators import (
+    MinLengthValidator,
+    MaxLengthValidator,
+    RegexValidator
+)
+
+from painless.helper.enums import RegexPatternEnum
 
 User = get_user_model()
 
@@ -55,10 +64,14 @@ class LoginUserSerializer(serializers.Serializer):
         })
 
 
-class SendOTPViewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("phone_number",)
+class SendOTPViewSerializer(serializers.Serializer):
+    phone_number = serializers.CharField()
+
+    def validate_phone_number(self, data):
+        RegexValidator(RegexPatternEnum.Iran_phone_number.value)(data)
+        MinLengthValidator(11)(data)
+        MaxLengthValidator(13)(data)
+        return data
 
 
 class ValidateOTPSerializer(serializers.Serializer):
@@ -79,14 +92,17 @@ class ChangePassSerializer(serializers.Serializer):
         return attrs
 
 
-class ForgotPassSerializer(serializers.ModelSerializer):
+class ForgotPassSerializer(serializers.Serializer):
     otp_code = serializers.CharField(required=True)
     new_password = serializers.CharField(**restrict)
     new_password_repeat = serializers.CharField(**restrict)
+    phone_number = serializers.CharField()
 
-    class Meta:
-        model = User
-        fields = ("phone_number", "otp_code", "new_password", "new_password_repeat")
+    def validate_phone_number(self, data):
+        RegexValidator(RegexPatternEnum.Iran_phone_number.value)(data)
+        MinLengthValidator(11)(data)
+        MaxLengthValidator(13)(data)
+        return data
 
     def validate(self, attrs):
         if attrs['new_password'] != attrs['new_password_repeat']:

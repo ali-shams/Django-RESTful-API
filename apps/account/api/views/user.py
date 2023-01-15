@@ -29,7 +29,7 @@ User = get_user_model()
 class RegisterView(generics.GenericAPIView):
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
-
+        breakpoint()
         request.data._mutable = True
         request.data['phone_number'] = request.data['phone_number'].replace("+98", "0")
         request.data['username'] = request.data['username'].lower()
@@ -73,8 +73,7 @@ class SendOTPView(APIView):
     def post(self, request):
         serializer = SendOTPViewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        phone_number = serializer.validated_data['phone_number']
+        phone_number = serializer.validated_data['phone_number'].replace("+98", "0")
         is_sent = cache.get(phone_number)
         if is_sent is None:
             otp_code = getOTP(phone_number)
@@ -92,7 +91,7 @@ class ValidateOTPView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def patch(self, request):
         serializer = ValidateOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -134,32 +133,25 @@ class ChangePassPView(UpdateAPIView):
 
 class ForgotPassPView(UpdateAPIView):
     def update(self, request, *args, **kwargs):
-<<<<<<< HEAD
         serializer = ForgotPassSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         get_otp_code = serializer.validated_data['otp_code']
         phone_number = serializer.validated_data['phone_number']
 
-=======
-        breakpoint()
-        serializer = ForgotPassSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        get_otp_code, phone_number = request.data['otp_code'], request.data['phone_number']
-        breakpoint()
->>>>>>> 475977fc38e8e304c9d21f9f227fb23956aecf29
         otp_code = cache.get(phone_number)
         if otp_code is None:
             return Response({
                 "msg": f"OTP expired, Try again."
-            }, status=status.HTTP_100_CONTINUE)
+            },
+                status=status.HTTP_100_CONTINUE
+            )
         elif otp_code == get_otp_code and \
                 serializer.data['new_password'] == serializer.data['new_password_repeat']:
-<<<<<<< HEAD
             user = User.dal.find_user_by_phone_number(phone_number)
             user.set_password(serializer.data.get("new_password"))
             user.save()
-            AuthToken.objects.filter(user_id=request.user.id).all().delete()
+            AuthToken.objects.filter(user_id=user.id).all().delete()
             return Response({
                 "token": AuthToken.objects.create(user)[1]
             }, status=status.HTTP_200_OK)
@@ -171,17 +163,6 @@ class ForgotPassPView(UpdateAPIView):
         else:
             return Response({
                 "msg": f"Password mismatch."
-=======
-            password_validation.validate_password(serializer.data['new_password'], request.user)
-            request.user.set_password(serializer.data.get("new_password"))
-            request.user.save()
-            return Response({
-                "token": AuthToken.objects.create(request.user)[1]
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({
-                "msg": f"Password mismatch.."
->>>>>>> 475977fc38e8e304c9d21f9f227fb23956aecf29
             }, status=status.HTTP_100_CONTINUE)
 
 

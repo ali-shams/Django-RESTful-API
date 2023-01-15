@@ -7,8 +7,8 @@ class RegexPatternEnum(Enum):
 
 
 class RegexOperatorPattern(Enum):
-    # HamraheAval: 091[0-9] | 099[0-6]
-    HamraheAval = r"(\+9891[0-9]\d{7})|(091[0-9]\d{7})$"
+    # HamraheAval: 091[0-9] | 099[0-3][6]
+    HamraheAval = r"(\+9891[0-9]\d{7})|(091[0-9]\d{7})|(\+9899([0-3]|[6])\d{7})|(099([0-3]|[6])\d{7})$"
     # Irancell: 090[0-5] | 093[0]|[3]|[5-9]
     Irancell = r"(\+9890[0-5]\d{7})|(090[0-5]\d{7})|(\+9893([0]|[3]|[5-9])\d{7})|(093([0]|[3]|[5-9])\d{7})$"
     # Rightel: 092[0-3]
@@ -18,4 +18,4 @@ class RegexOperatorPattern(Enum):
     # Samantel: 0999
     Samantel = r"(\+98999\d{7})|(0999\d{7})$"
     # Taliya: 0932
-    Taliya = "(\+98932\d{7})|(0932\d{7})$"
+    Taliya = r"(\+98932\d{7})|(0932\d{7})$"
