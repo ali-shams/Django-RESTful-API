@@ -1,5 +1,3 @@
-import re
-
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
@@ -29,15 +27,18 @@ def common_password(value):
         raise serializers.ValidationError(_(e.messages[0]))
 
 
+def phone_number(value):
+    RegexValidator(RegexPatternEnum.Iran_phone_number.value)(value)
+    MinLengthValidator(11)(value)
+    MaxLengthValidator(13)(value)
+
+
 class CreateUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(required=True)
 
     class Meta:
         model = User
         fields = ("username", "phone_number", "password", "password2")
-        extra_kwargs = {
-            "password": {"validators": (common_password,)}
-        }
 
     def create(self, validated_data):
         del validated_data["password2"]
@@ -48,6 +49,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "password": _("Password mismatch.")
             })
+        common_password(attrs['password'])
         return attrs
 
 
@@ -67,11 +69,9 @@ class LoginUserSerializer(serializers.Serializer):
 class SendOTPViewSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
 
-    def validate_phone_number(self, data):
-        RegexValidator(RegexPatternEnum.Iran_phone_number.value)(data)
-        MinLengthValidator(11)(data)
-        MaxLengthValidator(13)(data)
-        return data
+    def validate(self, attrs):
+        phone_number(attrs['phone_number'])
+        return attrs
 
 
 class ValidateOTPSerializer(serializers.Serializer):
@@ -98,16 +98,11 @@ class ForgotPassSerializer(serializers.Serializer):
     new_password_repeat = serializers.CharField(**restrict)
     phone_number = serializers.CharField()
 
-    def validate_phone_number(self, data):
-        RegexValidator(RegexPatternEnum.Iran_phone_number.value)(data)
-        MinLengthValidator(11)(data)
-        MaxLengthValidator(13)(data)
-        return data
-
     def validate(self, attrs):
         if attrs['new_password'] != attrs['new_password_repeat']:
             raise serializers.ValidationError({
                 "password": _("Password mismatch.")
             })
         common_password(attrs['new_password'])
+        phone_number(attrs['phone_number'])
         return attrs

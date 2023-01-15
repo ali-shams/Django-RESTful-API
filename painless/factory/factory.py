@@ -5,10 +5,10 @@ from ..helper.enums import RegexOperatorPattern
 
 
 def getOTP(phone_number):
-    operator = "Other"
+    operator_name = "Other"
     for operator in RegexOperatorPattern:
         if re.compile(operator.value).match(phone_number):
-            operator = operator.name
+            operator_name = operator.name
             break
     formats = {
         "HamraheAval": HamraheAvalPhoneNumber,
@@ -19,7 +19,7 @@ def getOTP(phone_number):
         "Taliya": TaliyaPhoneNumber,
         "Other": OtherPhoneNumber,
     }
-    result = formats[operator](phone_number)
+    result = formats[operator_name](phone_number)
     return result.call_send_otp()
 
 

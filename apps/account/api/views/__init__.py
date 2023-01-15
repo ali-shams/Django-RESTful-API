@@ -6,6 +6,8 @@ from .user import (
     ValidateOTPView,
     ChangePassPView,
     ForgotPassPView,
-    ListTokensView,
+)
+from .auth import (
+    ListTokensViewSet,
     KillTokensView,
 )

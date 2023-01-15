@@ -5,7 +5,6 @@ from rest_framework import status
 
 
 def custom_exception_handler(exc, context):
-    # breakpoint()
     response = exception_handler(exc, context)
     # if response is not None:
     #     response.data['status_code'] = response.status_code
@@ -23,8 +22,6 @@ class UniqueApiException(APIException):
     detail = _('Unique Exception.')
 
     def __init__(self, field):
-        # breakpoint()
         if field:
             detail = f"A user with that {field} already exists."
-        # breakpoint()
         super().__init__(detail)
