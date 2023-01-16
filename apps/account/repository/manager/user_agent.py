@@ -15,4 +15,3 @@ class UserAgentDataAccessLayerManager(Manager):
 
     def update_user_agent(self, user_agent, token_id):
         return self.get_queryset().update_user_agent(user_agent, token_id)
-

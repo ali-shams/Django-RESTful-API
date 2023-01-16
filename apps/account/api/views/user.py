@@ -44,7 +44,8 @@ class RegisterView(GenericAPIView):
         is_user_agent_header_exist(user_agent)
 
         request.data._mutable = True
-        request.data['phone_number'] = request.data['phone_number'].replace("+98", "0")
+        request.data['phone_number'] = \
+            request.data['phone_number'].replace("+98", "0")
         request.data['username'] = request.data['username'].lower()
         request.data._mutable = False
 
@@ -93,7 +94,7 @@ class LogoutView(APIView):
         is_user_agent_header_exist(user_agent)
         if str(request._auth.user_agent) != user_agent:
             # update user_agent for delete
-            user_agent = request._auth.user_agent
+            UserAgent.dal.update_user_agent(user_agent, request._auth)
 
         UserAgent.dal.delete_all_user_agent(user_agent)
 
@@ -107,7 +108,8 @@ class SendOTPView(APIView):
         serializer = SendOTPViewSerializer(data=request.data)
 
         serializer.is_valid(raise_exception=True)
-        phone_number = serializer.validated_data['phone_number'].replace("+98", "0")
+        phone_number = \
+            serializer.validated_data['phone_number'].replace("+98", "0")
         is_sent = cache.get(phone_number)
         if is_sent is None:
             otp_code = getOTP(phone_number)
@@ -115,7 +117,8 @@ class SendOTPView(APIView):
             return Response(None, status=status.HTTP_200_OK)
         else:
             return Response({
-                "msg": f"Please try about {cache.ttl(phone_number)} seconds later."
+                "msg": f"Please try about "
+                       f"{cache.ttl(phone_number)} seconds later."
             },
                 status=status.HTTP_100_CONTINUE
             )
@@ -158,7 +161,6 @@ class ChangePassPView(UpdateAPIView):
             UserAgent.dal.update_user_agent(user_agent, request._auth)
 
         serializer.is_valid(raise_exception=True)
-        # breakpoint()
         if not request.user.check_password(serializer.data.get("old_password")):
             raise ValidationError({
                 "password": _('Your old password was '
@@ -199,12 +201,13 @@ class ForgotPassPView(UpdateAPIView):
         otp_code = cache.get(phone_number)
         if otp_code is None:
             return Response({
-                "msg": f"OTP expired, Try again."
+                "msg": "OTP expired, Try again."
             },
                 status=status.HTTP_100_CONTINUE
             )
         elif otp_code == get_otp_code and \
-                serializer.data['new_password'] == serializer.data['new_password_repeat']:
+                serializer.data['new_password'] \
+                == serializer.data['new_password_repeat']:
             user = User.dal.find_user_by_phone_number(phone_number)
             user.set_password(serializer.data.get("new_password"))
             user.save()
@@ -221,12 +224,12 @@ class ForgotPassPView(UpdateAPIView):
             )
         elif otp_code != get_otp_code:
             return Response({
-                "otp_code": f"Invalid."
+                "otp_code": "Invalid."
             },
                 status=status.HTTP_100_CONTINUE
             )
 
         else:
             return Response({
-                "msg": f"Password mismatch."
+                "msg": "Password mismatch."
             }, status=status.HTTP_100_CONTINUE)

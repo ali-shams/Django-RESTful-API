@@ -29,4 +29,4 @@ urlpatterns = [
     path('kill-tokens', KillTokensView.as_view(), name='name'),
 ]
 
-urlpatterns = router.urls
+urlpatterns += router.urls

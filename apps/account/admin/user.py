@@ -29,7 +29,12 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("username", "email", "phone_number", "password1", "password2"),
+                "fields": (
+                    "username",
+                    "email",
+                    "phone_number",
+                    "password1",
+                    "password2"),
             },
         ),
     )

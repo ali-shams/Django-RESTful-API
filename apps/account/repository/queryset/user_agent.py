@@ -10,9 +10,9 @@ class UserAgentQuerySet(QuerySet):
     def delete_all_user_agent(self, user_agent):
         digest_objs = self.filter(user_agent=user_agent). \
             annotate(dig=F('auth_token__digest')).values('dig')
-        AuthToken.objects.filter(digest__in=
-                                 [digest_obj['dig']
-                                  for digest_obj in digest_objs]).delete()
+        AuthToken.objects.filter(
+            digest__in=[digest_obj['dig']
+                        for digest_obj in digest_objs]).delete()
 
     def update_user_agent(self, user_agent, token_id):
         self.filter(auth_token=token_id).update(user_agent=user_agent)

@@ -17,14 +17,21 @@ logger = logging.getLogger('main')
 
 
 class CustomRegisterForm(forms.ModelForm):
-    confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label='Confirm Password',
+                                       widget=forms.PasswordInput)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['email'].widget.attrs.update({'placeholder': _('Email')})
-        self.fields['phone_number'].widget.attrs.update({'required': 'required', 'placeholder': _('Phone Number')})
-        self.fields['password'].widget.attrs.update({'required': 'required', 'placeholder': _('Password')})
-        self.fields['confirm_password'].widget.attrs.update(
+        self.fields['email']. \
+            widget.attrs.update({'placeholder': _('Email')})
+        self.fields['phone_number']. \
+            widget.attrs.update({'required': 'required',
+                                 'placeholder': _('Phone Number')})
+        self.fields['password']. \
+            widget.attrs.update({'required': 'required',
+                                 'placeholder': _('Password')})
+        self.fields['confirm_password']. \
+            widget.attrs.update(
             {'required': 'required', 'placeholder': _('Confirm Password')})
 
         if 'data' in kwargs:
@@ -58,7 +65,8 @@ class CustomRegisterForm(forms.ModelForm):
                 self.add_error('password', e)
 
         self._post_clean()
-        logger.debug(f'Registration failed for:{[*self.errors.keys()]} by {self.data.get("phone_number")}')
+        logger.debug(f'Registration failed for:{[*self.errors.keys()]} '
+                     f'by {self.data.get("phone_number")}')
 
         return cleaned_data
 
@@ -70,7 +78,9 @@ class CustomRegisterForm(forms.ModelForm):
 
         except ValidationError as e:
             logger.info(
-                f'{self.data.get("phone_number")} tried to register again with ip address {get_request_ip(self.request)}')
+                f'{self.data.get("phone_number")} '
+                f'tried to register again with ip '
+                f'address {get_request_ip(self.request)}')
             self._update_errors(e)
 
     def save(self, commit=True):
@@ -87,24 +97,35 @@ class CustomRegisterForm(forms.ModelForm):
 class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({"class": "form-control", 'placeholder': _('Phone Number'), })
-        self.fields['password'].widget.attrs.update({"class": "form-control", 'placeholder': _('Password')})
+        self.fields['username']. \
+            widget.attrs.update(
+            {"class": "form-control", 'placeholder': _('Phone Number'), })
+        self.fields['password']. \
+            widget.attrs.update(
+            {"class": "form-control", 'placeholder': _('Password')})
 
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
         if username is not None and password:
-            self.user_cache = authenticate(self.request, username=username, password=password)
+            self.user_cache = \
+                authenticate(self.request,
+                             username=username,
+                             password=password)
 
             if self.user_cache is None:
                 logger.warning(
-                    f'{self.data.get("username")} with ip of {get_request_ip(self.request)} failed to log in because of invalid password or username')
+                    f'{self.data.get("username")} '
+                    f'with ip of {get_request_ip(self.request)} '
+                    f'failed to log in because of invalid password or username')
                 raise self.get_invalid_login_error()
 
             elif not self.user_cache.is_active:
                 logger.warning(
-                    f'{self.data.get("username")} with ip of {get_request_ip(self.request)} failed to log in because of not being an ACTIVE user')
+                    f'{self.data.get("username")} '
+                    f'with ip of {get_request_ip(self.request)} '
+                    f'failed to log in because of not being an ACTIVE user')
                 raise self.get_invalid_login_error()
 
             else:
